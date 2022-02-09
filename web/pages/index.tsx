@@ -12,12 +12,12 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <Image
+        {/* <Image
           src="/avatar.jpg"
           width={250}
           height={250}
           className={styles.avatar}
-        />
+        /> */}
         <h1 className={styles.title}>Clay Danford</h1>
 
         <p className={styles.description}>
