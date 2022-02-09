@@ -1,8 +1,8 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
+import type { NextPage } from 'next'
+import Head from 'next/head'
+import Image from 'next/image'
 // import styles from "../styles/Dark.module.css";
-import styles from "../styles/Home.module.css";
+import styles from '../styles/Home.module.css'
 
 const Home: NextPage = () => {
   return (
@@ -58,7 +58,7 @@ const Home: NextPage = () => {
 
       <footer className={styles.footer}>Copyright © 2020 Clay Danford</footer>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
