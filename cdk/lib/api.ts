@@ -10,7 +10,7 @@ export class API extends Construct {
     super(scope, id)
 
     const api = new appsync.GraphqlApi(this, 'API', {
-      name: 'HitCounter',
+      name: 'ClayDanfordDotCom',
       schema: appsync.Schema.fromAsset(
         path.join(__dirname, '../../api/schema.graphql')
       ),
@@ -35,9 +35,22 @@ export class API extends Construct {
       typeName: 'Mutation',
       fieldName: 'updateCount',
       requestMappingTemplate: appsync.MappingTemplate.fromFile(
-        path.join(__dirname, '../../api/updateCount.vtl')
+        path.join(__dirname, '../../api/updateCount.request.vtl')
       ),
-      responseMappingTemplate: appsync.MappingTemplate.dynamoDbResultItem()
+      responseMappingTemplate: appsync.MappingTemplate.fromFile(
+        path.join(__dirname, '../../api/updateCount.response.vtl')
+      )
+    })
+
+    dataSource.createResolver({
+      typeName: 'Query',
+      fieldName: 'getCount',
+      requestMappingTemplate: appsync.MappingTemplate.fromFile(
+        path.join(__dirname, '../../api/getCount.request.vtl')
+      ),
+      responseMappingTemplate: appsync.MappingTemplate.fromFile(
+        path.join(__dirname, '../../api/getCount.response.vtl')
+      )
     })
 
     // TODO Custom Domain: https://github.com/aws/aws-cdk/issues/18040

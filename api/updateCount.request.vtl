@@ -2,10 +2,13 @@
     "version" : "2017-02-28",
     "operation" : "UpdateItem",
     "key" : {
-        "pk" : "hitcount"
+        "pk" : { "S" : "hitcount" }
     },
     "update" : {
-        "expression" : "ADD count :plusOne",
+        "expression" : "ADD #count :plusOne",
+        "expressionNames" : {
+            "#count" : "count"
+        },
         "expressionValues" : {
             ":plusOne" : { "N" : 1 }
         }
