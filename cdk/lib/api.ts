@@ -33,15 +33,19 @@ export class API extends Construct {
       }
     })
 
-    new appsyncDomainName.CfnDomainName(this, 'CfnDomainName', {
-      certificateArn,
-      domainName: `api.${domainName}`
-    })
+    const ApiDomainName = new appsyncDomainName.CfnDomainName(
+      this,
+      'CfnDomainName',
+      {
+        certificateArn,
+        domainName: `api.${domainName}`
+      }
+    )
 
-    new appsyncDomainName.CfnDomainNameApiAssociation(
+    const ApiAssociation = new appsyncDomainName.CfnDomainNameApiAssociation(
       this,
       'CfnDomainNameApiAssociation',
-      { domainName, apiId: api.apiId }
+      { domainName: ApiDomainName.domainName, apiId: api.apiId }
     )
 
     // new route53.CnameRecord(this, 'APICname', {
@@ -83,7 +87,5 @@ export class API extends Construct {
         path.join(__dirname, '../../api/getCount.response.vtl')
       )
     })
-
-    // TODO Custom Domain: https://github.com/aws/aws-cdk/issues/18040
   }
 }
