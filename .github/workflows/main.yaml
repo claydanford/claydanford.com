@@ -46,33 +46,35 @@ jobs:
       - name: clear cache
         run: aws cloudfront create-invalidation --distribution-id $(aws ssm get-parameter --name "/claydanford.com/prod/distribution" | jq -r .Parameter.Value) --paths "/*"
 
-  # cdk:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: checkout
-  #       uses: actions/checkout@v2
+  cdk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
 
-  #     - name: setup
-  #       uses: actions/setup-node@v1
-  #       with:
-  #         node-version: 14.x
+      - name: setup
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
 
-  #     - name: install
-  #       run: npm ci
-  #       working-directory: ./cdk
+      - name: install
+        run: npm ci
+        working-directory: ./cdk
 
-  #     - name: build
-  #       run: npm run build
-  #       working-directory: ./cdk
+      - name: build
+        run: npm run build
+        working-directory: ./cdk
 
-  #     - name: cdk deploy
-  #       uses: youyo/aws-cdk-github-actions@v2
-  #       working-directory: ./cdk
-  #       with:
-  #         cdk_subcommand: deploy
-  #         cdk_args: --require-approval never
-  #         actions_comment: false
-  #       env:
-  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         AWS_DEFAULT_REGION: us-east-1
+      - name: aws creds
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::926167960188:role/GithubActionsRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: cdk deploy
+        uses: youyo/aws-cdk-github-actions@v2
+        working-directory: ./cdk
+        with:
+          cdk_subcommand: deploy
+          cdk_args: --require-approval never
+          actions_comment: false
