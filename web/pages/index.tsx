@@ -3,8 +3,17 @@ import Head from 'next/head'
 import Image from 'next/image'
 // import styles from "../styles/Dark.module.css";
 import styles from '../styles/Home.module.css'
+import { updateCount } from '../services/CounterService'
+import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
+  const [count, setCount] = useState('')
+
+  useEffect(() => {
+    const counter = async () => setCount(await updateCount())
+    counter()
+  }, [])
+
   return (
     <div className={styles.container}>
       <Head>
@@ -57,6 +66,7 @@ const Home: NextPage = () => {
       </main>
 
       <footer className={styles.footer}>Copyright © 2020 Clay Danford</footer>
+      <footer className={styles.counter}>{count}</footer>
     </div>
   )
 }
