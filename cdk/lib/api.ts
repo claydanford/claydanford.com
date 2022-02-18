@@ -1,13 +1,22 @@
 import { Construct } from 'constructs'
 import * as appsync from '@aws-cdk/aws-appsync-alpha'
+import { aws_appsync as appsyncDomainName } from 'aws-cdk-lib'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
+import * as acm from 'aws-cdk-lib/aws-certificatemanager'
+import * as route53 from 'aws-cdk-lib/aws-route53'
 import * as path from 'path'
 
-export interface APIProps {}
+export interface APIProps {
+  domainName: string
+  zone: route53.IHostedZone
+  certificateArn: string
+}
 
 export class API extends Construct {
-  constructor(scope: Construct, id: string, props?: APIProps) {
+  constructor(scope: Construct, id: string, props: APIProps) {
     super(scope, id)
+
+    const { domainName, certificateArn, zone } = props
 
     const api = new appsync.GraphqlApi(this, 'API', {
       name: 'ClayDanfordDotCom',
@@ -17,9 +26,31 @@ export class API extends Construct {
       authorizationConfig: {
         defaultAuthorization: {
           authorizationType: appsync.AuthorizationType.API_KEY
+          // apiKeyConfig: {
+          //   expires:
+          // }
         }
       }
     })
+
+    new appsyncDomainName.CfnDomainName(this, 'CfnDomainName', {
+      certificateArn,
+      domainName: `api.${domainName}`
+    })
+
+    new appsyncDomainName.CfnDomainNameApiAssociation(
+      this,
+      'CfnDomainNameApiAssociation',
+      { domainName, apiId: api.apiId }
+    )
+
+    // new route53.CnameRecord(this, 'APICname', {
+    //   zone,
+    //   domainName,
+    //   recordName: 'api.claydanford.com',
+    // })
+
+    // new route53.RecordSet(this, 'APIRecord', {})
 
     const table = new dynamodb.Table(this, 'Table', {
       partitionKey: {

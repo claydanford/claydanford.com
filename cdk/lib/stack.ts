@@ -23,6 +23,10 @@ export class ClayDanfordDotCom extends Stack {
 
     new StaticSite(this, 'StaticSite', { domainName, zone, certificate })
 
-    new API(this, 'API')
+    new API(this, 'API', {
+      domainName,
+      certificateArn: certificate.certificateArn,
+      zone
+    })
   }
 }
