@@ -65,7 +65,7 @@ const Home: NextPage = () => {
         </div>
       </main>
 
-      <footer className={styles.footer}>Copyright © 2020 Clay Danford</footer>
+      <footer className={styles.footer}>Copyright © {new Date().getFullYear()} Clay Danford</footer>
       <footer className={styles.counter}>{count}</footer>
     </div>
   )
