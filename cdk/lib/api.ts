@@ -1,6 +1,10 @@
 import { Construct } from 'constructs'
 import * as appsync from '@aws-cdk/aws-appsync-alpha'
-import { aws_appsync as appsyncDomainName } from 'aws-cdk-lib'
+import {
+  aws_appsync as appsyncDomainName,
+  Expiration,
+  Duration
+} from 'aws-cdk-lib'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
 import * as acm from 'aws-cdk-lib/aws-certificatemanager'
 import * as route53 from 'aws-cdk-lib/aws-route53'
@@ -25,10 +29,10 @@ export class API extends Construct {
       ),
       authorizationConfig: {
         defaultAuthorization: {
-          authorizationType: appsync.AuthorizationType.API_KEY
-          // apiKeyConfig: {
-          //   expires:
-          // }
+          authorizationType: appsync.AuthorizationType.API_KEY,
+          apiKeyConfig: {
+            expires: Expiration.after(Duration.days(365))
+          }
         }
       }
     })

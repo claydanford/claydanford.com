@@ -1,4 +1,5 @@
 export const AppSyncConfig = {
+  // aws_appsync_apiKey: process.env.API_KEY,
   aws_appsync_apiKey: 'da2-nnsliswyvvecvkohhmnxvecfcu',
   aws_appsync_graphqlEndpoint:
     // 'https://api.claydanford.com/graphql',
