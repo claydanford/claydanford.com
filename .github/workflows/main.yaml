@@ -7,10 +7,10 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION : us-east-1
+  AWS_REGION: us-east-1
 
 jobs:
-  web:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -21,52 +21,12 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: install
-        run: yarn
-        working-directory: ./web
-
-      - name: lint
-        run: npm run lint
-        working-directory: ./web
-
-      - name: build
-        run: npm run build
-        working-directory: ./web
-
-      - name: aws creds
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: arn:aws:iam::926167960188:role/GithubActionsRole
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: s3 cp
-        run: aws s3 cp ./ s3://$(aws ssm get-parameter --name "/claydanford.com/prod/bucket" | jq -r .Parameter.Value)/ --recursive
-        working-directory: ./web/out
-
-      - name: clear cache
-        run: aws cloudfront create-invalidation --distribution-id $(aws ssm get-parameter --name "/claydanford.com/prod/distribution" | jq -r .Parameter.Value) --paths "/*"
-
-  cdk:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v2
-
-      - name: setup
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-
-      - name: install
+      - name: install cdk
         run: npm ci
         working-directory: ./cdk
 
-      - name: test
+      - name: test cdk
         run: npm run test
-        working-directory: ./cdk
-
-      - name: build
-        run: npm run build
         working-directory: ./cdk
 
       - name: aws creds
@@ -82,3 +42,22 @@ jobs:
           cdk_subcommand: deploy
           cdk_args: --require-approval never
           actions_comment: false
+
+      - name: install web
+        run: yarn
+        working-directory: ./web
+
+      - name: lint web
+        run: npm run lint
+        working-directory: ./web
+
+      - name: build web
+        run: npm run build
+        working-directory: ./web
+
+      - name: s3 cp
+        run: aws s3 cp ./ s3://$(aws ssm get-parameter --name "/claydanford.com/prod/bucket" | jq -r .Parameter.Value)/ --recursive
+        working-directory: ./web/out
+
+      - name: clear cache
+        run: aws cloudfront create-invalidation --distribution-id $(aws ssm get-parameter --name "/claydanford.com/prod/distribution" | jq -r .Parameter.Value) --paths "/*"
