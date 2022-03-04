@@ -1,14 +1,11 @@
 import { Construct } from 'constructs'
 import * as appsync from '@aws-cdk/aws-appsync-alpha'
-import {
-  aws_appsync as appsyncDomainName,
-  Expiration,
-  Duration
-} from 'aws-cdk-lib'
+import { aws_appsync as appsyncLegacy } from 'aws-cdk-lib'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
 import * as acm from 'aws-cdk-lib/aws-certificatemanager'
 import * as route53 from 'aws-cdk-lib/aws-route53'
 import * as path from 'path'
+import * as crypto from 'crypto'
 
 export interface APIProps {
   domainName: string
@@ -29,15 +26,25 @@ export class API extends Construct {
       ),
       authorizationConfig: {
         defaultAuthorization: {
-          authorizationType: appsync.AuthorizationType.API_KEY,
-          apiKeyConfig: {
-            expires: Expiration.after(Duration.days(365))
-          }
+          authorizationType: appsync.AuthorizationType.IAM
         }
       }
     })
 
-    const ApiDomainName = new appsyncDomainName.CfnDomainName(
+    const cfnAPI = api.node.defaultChild as appsyncLegacy.CfnGraphQLApi
+    cfnAPI.addPropertyOverride('AuthenticationType', 'API_KEY')
+    new appsyncLegacy.CfnApiKey(
+      this,
+      `APIKey${crypto.randomBytes(8).toString('hex')}`,
+      {
+        apiId: api.apiId,
+        expires: Math.round(
+          new Date().setFullYear(new Date().getFullYear() + 1) / 1000
+        )
+      }
+    )
+
+    const ApiDomainName = new appsyncLegacy.CfnDomainName(
       this,
       'CfnDomainName',
       {
@@ -46,7 +53,7 @@ export class API extends Construct {
       }
     )
 
-    const ApiAssociation = new appsyncDomainName.CfnDomainNameApiAssociation(
+    const ApiAssociation = new appsyncLegacy.CfnDomainNameApiAssociation(
       this,
       'CfnDomainNameApiAssociation',
       { domainName: ApiDomainName.domainName, apiId: api.apiId }
