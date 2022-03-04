@@ -1,6 +1,6 @@
 import { Construct } from 'constructs'
 import * as appsync from '@aws-cdk/aws-appsync-alpha'
-import { aws_appsync as appsyncLegacy } from 'aws-cdk-lib'
+import { aws_appsync as cdk } from 'aws-cdk-lib'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
 import * as acm from 'aws-cdk-lib/aws-certificatemanager'
 import * as route53 from 'aws-cdk-lib/aws-route53'
@@ -31,9 +31,9 @@ export class API extends Construct {
       }
     })
 
-    const cfnAPI = api.node.defaultChild as appsyncLegacy.CfnGraphQLApi
+    const cfnAPI = api.node.defaultChild as cdk.CfnGraphQLApi
     cfnAPI.addPropertyOverride('AuthenticationType', 'API_KEY')
-    new appsyncLegacy.CfnApiKey(
+    new cdk.CfnApiKey(
       this,
       `APIKey${crypto.randomBytes(8).toString('hex')}`,
       {
@@ -44,7 +44,7 @@ export class API extends Construct {
       }
     )
 
-    const ApiDomainName = new appsyncLegacy.CfnDomainName(
+    const ApiDomainName = new cdk.CfnDomainName(
       this,
       'CfnDomainName',
       {
@@ -53,7 +53,7 @@ export class API extends Construct {
       }
     )
 
-    const ApiAssociation = new appsyncLegacy.CfnDomainNameApiAssociation(
+    const ApiAssociation = new cdk.CfnDomainNameApiAssociation(
       this,
       'CfnDomainNameApiAssociation',
       { domainName: ApiDomainName.domainName, apiId: api.apiId }
