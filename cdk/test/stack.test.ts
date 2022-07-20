@@ -23,6 +23,6 @@ test('Stack Resources Created', () => {
   template.resourceCountIs("AWS::IAM::Role", 1)
   template.resourceCountIs("AWS::IAM::Policy", 1)
   template.resourceCountIs("AWS::AppSync::DataSource", 1)
-  template.resourceCountIs("AWS::AppSync::Resolver", 2)
+  template.resourceCountIs("AWS::AppSync::Resolver", 1)
   template.resourceCountIs("AWS::DynamoDB::Table", 1)
 })
