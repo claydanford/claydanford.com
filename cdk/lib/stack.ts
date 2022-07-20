@@ -1,7 +1,9 @@
 import { Stack, StackProps } from 'aws-cdk-lib'
 import { Construct } from 'constructs'
-import * as route53 from 'aws-cdk-lib/aws-route53'
-import * as acm from 'aws-cdk-lib/aws-certificatemanager'
+import {
+  aws_certificatemanager as acm,
+  aws_route53 as route53
+} from 'aws-cdk-lib'
 import { StaticSite } from './staticsite'
 import { API } from './api'
 
@@ -23,10 +25,6 @@ export class ClayDanfordDotCom extends Stack {
 
     new StaticSite(this, 'StaticSite', { domainName, zone, certificate })
 
-    new API(this, 'API', {
-      domainName,
-      certificateArn: certificate.certificateArn,
-      zone
-    })
+    new API(this, 'API')
   }
 }

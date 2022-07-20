@@ -1,17 +1,14 @@
 import { Construct } from 'constructs'
-import * as route53 from 'aws-cdk-lib/aws-route53'
-import * as targets from 'aws-cdk-lib/aws-route53-targets'
-import * as acm from 'aws-cdk-lib/aws-certificatemanager'
-import * as s3 from 'aws-cdk-lib/aws-s3'
-import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
-import * as origins from 'aws-cdk-lib/aws-cloudfront-origins'
-import * as ssm from 'aws-cdk-lib/aws-ssm'
-
-export interface StaticSiteProps {
-  domainName: string,
-  zone: route53.IHostedZone,
-  certificate: acm.ICertificate
-}
+import {
+  aws_certificatemanager as acm,
+  aws_cloudfront as cloudfront,
+  aws_cloudfront_origins as origins,
+  aws_route53 as route53,
+  aws_route53_targets as targets,
+  aws_s3 as s3,
+  aws_ssm as ssm
+} from 'aws-cdk-lib'
+import { StaticSiteProps } from '../types'
 
 export class StaticSite extends Construct {
   constructor(scope: Construct, id: string, props: StaticSiteProps) {
@@ -53,22 +50,14 @@ export class StaticSite extends Construct {
 
     const ssmPrefix = `/${domainName}/prod`
 
-    const params = [
-      {
-        id: 'BucketParam',
-        stringValue: bucket.bucketName,
-        parameterName: `${ssmPrefix}/bucket`
-      },
-      {
-        id: 'DistributionParam',
-        stringValue: distribution.distributionId,
-        parameterName: `${ssmPrefix}/distribution`
-      }
-    ]
+    new ssm.StringParameter(this, 'BucketParam', {
+      stringValue: bucket.bucketName,
+      parameterName: `${ssmPrefix}/bucket`
+    })
 
-    params.forEach((param) => {
-      const { id, stringValue, parameterName } = param
-      new ssm.StringParameter(this, id, { stringValue, parameterName })
+    new ssm.StringParameter(this, 'DistributionParam', {
+      stringValue: distribution.distributionId,
+      parameterName: `${ssmPrefix}/distribution`
     })
   }
 }
