@@ -1,16 +1,13 @@
-
 import { API, graphqlOperation } from 'aws-amplify'
 
 export const updateCount = async () => {
-  const query = `mutation MyMutation {
+  const mutation = `mutation MyMutation {
     updateCount {
       count
     }
   }`
 
-  const { data } = (await API.graphql(graphqlOperation(query))) as {
-    data: any
-  }
+  const res: any = await API.graphql(graphqlOperation(mutation))
 
-  return data.updateCount.count
+  return res.data.updateCount.count
 }

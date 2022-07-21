@@ -1,8 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-// import styles from "../styles/Dark.module.css";
-import styles from '../styles/Home.module.css'
+import styles from '../styles/Dark.module.css'
+// import styles from '../styles/Home.module.css'
 import { updateCount } from '../services/CounterService'
 import { useEffect, useState } from 'react'
 
@@ -14,6 +13,8 @@ const Home: NextPage = () => {
     counter()
   }, [])
 
+  if (count) console.log(count)
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -21,12 +22,13 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        {/* <Image
+        <img
           src="/avatar.jpg"
           width={250}
           height={250}
           className={styles.avatar}
-        /> */}
+          alt="Clay Danford"
+        />
         <h1 className={styles.title}>Clay Danford</h1>
 
         <p className={styles.description}>
@@ -43,7 +45,7 @@ const Home: NextPage = () => {
             </p>
           </div>
           <div className={styles.card}>
-            <h2>AWS Cloud</h2>
+            <h2>Cloud First</h2>
             <p>
               AWS Solutions Architect Professional, AWS DevOps Professional,
               with experience in both public and private cloud.
@@ -57,7 +59,7 @@ const Home: NextPage = () => {
             </p>
           </div>
           <div className={styles.card}>
-            <h2>Serverless First</h2>
+            <h2>Application Architecture</h2>
             <p>
               Expertise in cloud native serverless applications and solutions.
             </p>
@@ -65,8 +67,9 @@ const Home: NextPage = () => {
         </div>
       </main>
 
-      <footer className={styles.footer}>Copyright © {new Date().getFullYear()} Clay Danford</footer>
-      <footer className={styles.counter}>{count}</footer>
+      <footer className={styles.footer}>
+        Copyright © {new Date().getFullYear()} Clay Danford
+      </footer>
     </div>
   )
 }
