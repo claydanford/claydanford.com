@@ -6,11 +6,16 @@ import {
 } from 'aws-cdk-lib'
 import { StaticSite } from './staticsite'
 import { API } from './api'
+import { ClayDanfordDotComStackProps } from '../types'
 
 const domainName = 'claydanford.com'
 
 export class ClayDanfordDotCom extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    props: ClayDanfordDotComStackProps
+  ) {
     super(scope, id, props)
 
     const zone = new route53.PublicHostedZone(this, 'HostedZone', {
@@ -25,6 +30,6 @@ export class ClayDanfordDotCom extends Stack {
 
     new StaticSite(this, 'StaticSite', { domainName, zone, certificate })
 
-    new API(this, 'API')
+    new API(this, 'API', props.env)
   }
 }

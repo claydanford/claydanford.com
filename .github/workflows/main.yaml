@@ -6,9 +6,6 @@ permissions:
   id-token: write
   contents: read
 
-env:
-  AWS_REGION: us-east-1
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -29,14 +26,25 @@ jobs:
         run: npm run test
         working-directory: ./cdk
 
+      - name: install lambda
+        run: npm ci
+        working-directory: ./lambda
+
+      - name: build lambda
+        run: npm run build
+        working-directory: ./lambda
+
       - name: aws creds
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: arn:aws:iam::926167960188:role/GithubActionsRole
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/GithubActionsRole
+          aws-region: ${{ env.CDK_DEFAULT_REGION }}
 
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v2
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
+          CDK_DEFAULT_REGION: ${{ env.CDK_DEFAULT_REGION }}
         with:
           working_dir: ./cdk
           cdk_subcommand: deploy
