@@ -38,7 +38,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/GithubActionsRole
-          aws-region: ${{ env.CDK_DEFAULT_REGION }}
+          aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
 
       - name: cdk deploy
         uses: youyo/aws-cdk-github-actions@v2
